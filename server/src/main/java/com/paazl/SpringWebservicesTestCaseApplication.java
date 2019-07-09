@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class SpringWebservicesTestCaseApplication {
 
 	/*
+		TODO
 		Extend the server with rest resource endpoints that will allow a client to order new sheep, and get the current
 		status (balance of the shepherds account and the amount of sheep (dead and alive)).
 	 */

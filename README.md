@@ -34,3 +34,8 @@ balance of the bank account and how many sheep are still alive.
 
 The server, once started, might kill sheep every 10 seconds. The 10 seconds and the chance a sheep
 dies are adjustable in the property files.
+
+## Endpoints
+http://localhost:8080/rest/shepherdmanager/balance
+http://localhost:8080/rest/shepherdmanager/status
+http://localhost:8080/rest/shepherdmanager/order
