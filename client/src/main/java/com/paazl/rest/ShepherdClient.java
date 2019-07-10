@@ -1,17 +1,22 @@
 package com.paazl.rest;
 
-import com.paazl.exception.OrderAmountException;
 import com.paazl.dto.SheepStatusesDto;
+import com.paazl.exception.OrderAmountException;
+import com.paazl.gui.GuiInterface;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import com.paazl.gui.GuiInterface;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.ws.rs.core.MediaType;
 import java.math.BigInteger;
 import java.util.Map;
 
@@ -33,8 +38,79 @@ public class ShepherdClient {
 
         guiInterface.addOrderRequestListener(i -> {
             guiInterface.addServerFeedback("Number of sheep to order: " + i);
-            guiInterface.addServerFeedback(makeOrder(i));
+            //guiInterface.addServerFeedback(makeOrder(i));
+            guiInterface.addServerFeedback(testJersey(i));
         });
+    }
+
+    public String testJersey(int i) {
+
+
+//        Client client = ClientBuilder.newClient();
+//
+//
+//        client
+//                .target(BASE_URL + STATUS_ENDPOINT)
+//                .request(MediaType.APPLICATION_JSON)
+//                .get(SheepStatusesDto.class);
+//
+//        System.out.println(client);
+
+
+
+
+//        try {
+//
+//            Client client = Client.create();
+//
+//            WebResource webResource = client
+//                    .resource(BASE_URL + STATUS_ENDPOINT);
+//
+//            ClientResponse response = webResource.accept("application/json")
+//                    .get(ClientResponse.class);
+//
+//            if (response.getStatus() != 200) {
+//                throw new RuntimeException("Failed : HTTP error code : "
+//                        + response.getStatus());
+//            }
+//
+//            SheepStatusesDto output = response.getEntity(SheepStatusesDto.class);
+//
+//            System.out.println("Output from Server .... \n");
+//            System.out.println(output);
+//
+//        } catch (Exception e) {
+//
+//            e.printStackTrace();
+//
+//        }
+
+
+        ClientConfig clientConfig = new DefaultClientConfig();
+
+        // Create Client based on Config
+        Client client = Client.create(clientConfig);
+
+        WebResource webResource = client.resource(BASE_URL + STATUS_ENDPOINT);
+
+        WebResource.Builder builder = webResource.accept(MediaType.APPLICATION_JSON)
+                .header("content-type", MediaType.APPLICATION_JSON);
+
+        ClientResponse response = builder.get(ClientResponse.class);
+
+        // Status 200 is successful.
+        if (response.getStatus() != 200) {
+            System.out.println("Failed with HTTP Error code: " + response.getStatus());
+            String error= response.getEntity(String.class);
+            System.out.println("Error: "+error);
+            return null;
+        }
+
+        System.out.println("Output from Server .... \n");
+
+        SheepStatusesDto employee = response.getEntity(SheepStatusesDto.class);
+        System.out.println(employee);
+        return null;
     }
 
     public String getServerStatus() {

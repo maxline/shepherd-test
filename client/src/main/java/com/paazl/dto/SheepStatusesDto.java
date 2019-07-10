@@ -1,5 +1,8 @@
 package com.paazl.dto;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class SheepStatusesDto {
     private int numberOfHealthySheep;
     private int numberOfDeadSheep;
