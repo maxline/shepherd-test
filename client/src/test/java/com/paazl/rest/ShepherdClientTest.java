@@ -17,6 +17,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.paazl.common.Constants.ERROR_MESSAGE_ORDER_AMOUNT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
@@ -96,5 +97,12 @@ public class ShepherdClientTest {
         assertThat(testInstance.makeOrder(nofSheepDesired), is(ERROR_MESSAGE_SERVER_IS_UNAVAILABLE));
     }
 
+    @Test
+    public void makeOrder_ShouldReturnErrorMessageOrderAmountException() {
+        int nofSheepDesired = -1;
 
+        when(restTemplate.postForEntity(BASE_URL + ORDER_ENDPOINT, nofSheepDesired, Map.class)).thenThrow(new RestClientException(""));
+
+        assertThat(testInstance.makeOrder(nofSheepDesired), is(ERROR_MESSAGE_ORDER_AMOUNT));
+    }
 }

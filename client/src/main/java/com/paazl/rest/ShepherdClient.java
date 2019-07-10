@@ -1,5 +1,6 @@
 package com.paazl.rest;
 
+import com.paazl.exception.OrderAmountException;
 import com.paazl.dto.SheepStatusesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,23 +15,16 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigInteger;
 import java.util.Map;
 
+import static com.paazl.common.Constants.*;
+
 @Component
 public class ShepherdClient {
 
     /*
-        TODO Use a Rest client to obtain the server status, so this client can be used to obtain that status.
-        TODO Write unit tests.
-     */
+                TODO Use a Rest client to obtain the server status, so this client can be used to obtain that status.
+                TODO Write unit tests.
+             */
     private final Logger log = LoggerFactory.getLogger(getClass());
-
-    private static final String ERROR_MESSAGE_SERVER_IS_UNAVAILABLE = "Server is unavailable";
-    private static final String SUCCESS_MESSAGE_STATUS = "Balance: %d, number of sheep healthy and dead: [%d, %d]";
-
-    private static final String BASE_URL = "http://localhost:8080/rest/shepherdmanager";
-    private static final String BALANCE_ENDPOINT = "/balance";
-    private static final String STATUS_ENDPOINT = "/status";
-    private static final String ORDER_ENDPOINT = "/order";
-
 
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -62,10 +56,22 @@ public class ShepherdClient {
         log.info("Make order for {} number of sheeps ", sheepsAmount);
 
         try {
+            validateSheepsAmount(sheepsAmount);
+        } catch (OrderAmountException e) {
+            return e.getMessage();
+        }
+
+        try {
             ResponseEntity<Map> response = restTemplate.postForEntity(BASE_URL + ORDER_ENDPOINT, sheepsAmount, Map.class);
             return response.getBody().get("body").toString();
         } catch (RestClientException e) {
             return ERROR_MESSAGE_SERVER_IS_UNAVAILABLE;
+        }
+    }
+
+    private void validateSheepsAmount(int sheepsAmount) throws OrderAmountException {
+        if (sheepsAmount <= 0) {
+            throw new OrderAmountException();
         }
     }
 
